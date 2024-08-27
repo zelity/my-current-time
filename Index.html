@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Current Time in EST</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            text-align: center;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        #time {
+            font-size: 36px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Current Time in EST</h1>
+        <div id="time"></div>
+    </div>
+    <script>
+        function updateTime() {
+            // Get current time
+            const now = new Date();
+            
+            // Convert to UTC and then to EST (UTC-5 hours)
+            const utcOffset = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const estDate = new Date(utcOffset - (5 * 60 * 60 * 1000));
+
+            // Format time as 12-hour format with AM/PM
+            let hours = estDate.getHours();
+            const minutes = String(estDate.getMinutes()).padStart(2, '0');
+            const seconds = String(estDate.getSeconds()).padStart(2, '0');
+            
+            // Determine AM/PM suffix
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12; // Convert to 12-hour format
+            hours = hours ? hours : 12; // If hour is 0 (12 AM), convert to 12
+
+            const timeString = `${hours}:${minutes}:${seconds} ${ampm}`;
+            document.getElementById('time').textContent = timeString;
+        }
+
+        // Update time every second
+        setInterval(updateTime, 1000);
+        updateTime(); // Initial call to display time immediately
+    </script>
+</body>
+</html>
