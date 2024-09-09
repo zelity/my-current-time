@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Current Time in EST</title>
+    <title>Current Time in EST/EDT</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -39,7 +39,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Current Time in EST</h1>
+        <h1>Current Time in EST/EDT</h1>
         <div id="time"></div>
     </div>
     <script>
@@ -47,14 +47,24 @@
             // Get current time
             const now = new Date();
             
-            // Convert to UTC and then to EST (UTC-5 hours)
-            const utcOffset = now.getTime() + (now.getTimezoneOffset() * 60000);
-            const estDate = new Date(utcOffset - (5 * 60 * 60 * 1000));
+            // Check if current date is within Daylight Saving Time for Eastern Time Zone
+            const startDST = new Date(now.getFullYear(), 2, 14); // Second Sunday in March
+            const endDST = new Date(now.getFullYear(), 10, 7); // First Sunday in November
+            startDST.setDate(14 - startDST.getDay()); // Adjust to Second Sunday
+            endDST.setDate(7 - endDST.getDay()); // Adjust to First Sunday
+
+            const isDST = now >= startDST && now < endDST; // Check if current time is in DST
+
+            // Set the UTC offset depending on whether it's DST
+            const utcOffset = isDST ? -4 : -5; // UTC-4 for EDT, UTC-5 for EST
+
+            const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const easternTime = new Date(utcTime + (utcOffset * 60 * 60 * 1000));
 
             // Format time as 12-hour format with AM/PM
-            let hours = estDate.getHours();
-            const minutes = String(estDate.getMinutes()).padStart(2, '0');
-            const seconds = String(estDate.getSeconds()).padStart(2, '0');
+            let hours = easternTime.getHours();
+            const minutes = String(easternTime.getMinutes()).padStart(2, '0');
+            const seconds = String(easternTime.getSeconds()).padStart(2, '0');
             
             // Determine AM/PM suffix
             const ampm = hours >= 12 ? 'PM' : 'AM';
